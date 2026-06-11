@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touka Bot - Sistema de Verificação Oficial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,107,107,0.3) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(78,205,196,0.2) 0%, transparent 60%);
+            animation: rotateReverse 25s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotateReverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateY(100vh) rotate(0deg); }
+            to { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo i {
+            font-size: 2rem;
+            color: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .welcome-icon {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .card h2 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        /* Loading Animation */
+        .loading-container {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-bottom: 4px solid #4ecdc4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .loading-steps {
+            margin-top: 2rem;
+        }
+
+        .step-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .step-loading.active {
+            opacity: 1;
+            transform: translateX(10px);
+        }
+
+        .step-loading i {
+            font-size: 1.2rem;
+        }
+
+        /* Code Display */
+        .code-container {
+            text-align: center;
+        }
+
+        .code-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 2px solid rgba(255,107,107,0.5);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { border-color: rgba(255,107,107,0.5); }
+            50% { border-color: rgba(255,107,107,1); }
+        }
+
+        .code-label {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .code {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 10px;
+            font-family: monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            word-break: break-all;
+        }
+
+        .code-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 10px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Response Message */
+        .response-message {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .response-message.success {
+            background: rgba(0, 184, 148, 0.3);
+            border: 1px solid #00b894;
+            display: block;
+        }
+
+        .response-message.error {
+            background: rgba(255, 107, 107, 0.3);
+            border: 1px solid #ff6b6b;
+            display: block;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .code {
+                font-size: 1.5rem;
+                letter-spacing: 5px;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Character Animation */
+        .character {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .character-icon {
+            font-size: 5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .speech-bubble {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            position: relative;
+            max-width: 300px;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent rgba(255, 255, 255, 0.2) transparent transparent;
+        }
+
+        .typing-text {
+            overflow: hidden;
+            border-right: 2px solid #ff6b6b;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end);
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particles" id="particles"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-robot"></i>
+                <span>Touka Bot</span>
+            </div>
+            <div class="nav-links">
+                <a onclick="showSection('welcome')">Início</a>
+                <a onclick="startVerification()">Verificar</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Seção de Boas-vindas -->
+        <div id="welcome-section" class="welcome-section">
+            <div class="character">
+                <div class="character-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="speech-bubble">
+                    <p class="typing-text">Olá! Eu sou a Touka! 🌸</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="welcome-icon">
+                    <i class="fas fa-star-of-life"></i>
+                </div>
+                <h1 class="welcome-title">Bem-vindo ao Sistema de Verificação</h1>
+                <p class="welcome-subtitle">
+                    Para garantir a segurança do nosso servidor,<br>
+                    precisamos que você complete a verificação abaixo.
+                </p>
+                <div class="btn-group">
+                    <button onclick="startVerification()" class="btn btn-primary">
+                        <i class="fas fa-shield-alt"></i> Iniciar Verificação
+                    </button>
+                    <a href="https://discord.gg/AWh8hhTpds" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-discord"></i> Servidor Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Carregamento -->
+        <div id="loading-section" class="hidden">
+            <div class="card">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text" id="loading-text">Iniciando verificação...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="loading-steps">
+                        <div class="step-loading" id="step1">
+                            <i class="fas fa-spinner fa-pulse"></i>
+                            <span>Conectando ao servidor...</span>
+                        </div>
+                        <div class="step-loading" id="step2">
+                            <i class="fas fa-spinner fa-pulse"></i>
+                            <span>Gerando código seguro...</span>
+                        </div>
+                        <div class="step-loading" id="step3">
+                            <i class="fas fa-spinner fa-pulse"></i>
+                            <span>Preparando verificação...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção do Código -->
+        <div id="code-section" class="hidden">
+            <div class="card">
+                <div class="code-container">
+                    <div class="character" style="margin-bottom: 1rem;">
+                        <div class="character-icon" style="font-size: 3rem;">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="speech-bubble" style="background: rgba(255,107,107,0.3);">
+                            <p>Seu código foi gerado! 🌸</p>
+                        </div>
+                    </div>
+                    
+                    <h2><i class="fas fa-key"></i> Seu Código de Verificação</h2>
+                    <div class="code-box">
+                        <div class="code-label">Código único:</div>
+                        <div class="code" id="generated-code">XXXXXX</div>
+                        <div class="code-info">
+                            <i class="fas fa-info-circle"></i> Este código expira em 10 minutos
+                        </div>
+                    </div>
+                    
+                    <p style="margin-bottom: 1rem;">
+                        <i class="fas fa-arrow-right"></i> Copie este código e cole no Discord<br>
+                        <i class="fas fa-arrow-right"></i> Use o comando <strong>/verificar</strong> e depois <strong>COLOCAR CÓDIGO</strong>
+                    </p>
+                    
+                    <button onclick="copyCode()" class="btn btn-secondary">
+                        <i class="fas fa-copy"></i> Copiar Código
+                    </button>
+                    
+                    <div class="btn-group">
+                        <a href="https://discord.com/oauth2/authorize?client_id=1514319138636431400&permissions=8&integration_type=0&scope=bot" class="btn btn-primary" target="_blank">
+                            <i class="fab fa-discord"></i> Adicionar Bot ao Servidor
+                        </a>
+                        <a href="https://discord.gg/AWh8hhTpds" class="btn btn-success" target="_blank">
+                            <i class="fas fa-door-open"></i> Voltar ao Servidor
+                        </a>
+                    </div>
+                    
+                    <div id="response-message" class="response-message"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🌸 Touka Bot - Sistema de Verificação Oficial | Protegendo sua comunidade desde 2024 🌸</p>
+    </footer>
+
+    <script>
+        // Códigos pré-definidos
+        const CODIGOS = ["HJKQO3", "JKDOP08", "IHKSOP92", "WYDAK13", "H5KLPA02", "JGKLE56"];
+        
+        // Variáveis
+        let currentCode = "";
+        
+        // Criar partículas flutuantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 5 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 10 + 5 + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Mostrar seção
+        function showSection(section) {
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('code-section').classList.add('hidden');
+            
+            if (section === 'welcome') {
+                document.getElementById('welcome-section').classList.remove('hidden');
+            }
+        }
+        
+        // Iniciar verificação com animação
+        function startVerification() {
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('loading-section').classList.remove('hidden');
+            document.getElementById('code-section').classList.add('hidden');
+            
+            // Reset progresso
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%';
+            
+            // Reset steps
+            const steps = ['step1', 'step2', 'step3'];
+            steps.forEach(step => {
+                const stepEl = document.getElementById(step);
+                stepEl.classList.remove('active');
+                stepEl.querySelector('i').className = 'fas fa-spinner fa-pulse';
+            });
+            
+            // Simular processo de verificação
+            let progress = 0;
+            let currentStep = 0;
+            
+            const loadingTexts = [
+                'Conectando ao servidor de verificação...',
+                'Gerando código seguro e criptografado...',
+                'Quase lá! Preparando seu código...',
+                'Código gerado com sucesso!'
+            ];
+            
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                
+                // Atualizar steps
+                if (progress >= 20 && currentStep === 0) {
+                    document.getElementById('step1').classList.add('active');
+                    document.getElementById('step1').querySelector('i').className = 'fas fa-check-circle';
+                    currentStep = 1;
+                }
+                if (progress >= 50 && currentStep === 1) {
+                    document.getElementById('step2').classList.add('active');
+                    document.getElementById('step2').querySelector('i').className = 'fas fa-check-circle';
+                    currentStep = 2;
+                }
+                if (progress >= 80 && currentStep === 2) {
+                    document.getElementById('step3').classList.add('active');
+                    document.getElementById('step3').querySelector('i').className = 'fas fa-check-circle';
+                    currentStep = 3;
+                }
+                
+                // Atualizar texto
+                const textIndex = Math.floor(progress / 25);
+                if (textIndex < loadingTexts.length) {
+                    document.getElementById('loading-text').textContent = loadingTexts[textIndex];
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        generateCode();
+                    }, 500);
+                }
+            }, 150);
+        }
+        
+        // Gerar código aleatório
+        function generateCode() {
+            // Selecionar código aleatório da lista
+            const randomIndex = Math.floor(Math.random() * CODIGOS.length);
+            currentCode = CODIGOS[randomIndex];
+            
+            document.getElementById('generated-code').textContent = currentCode;
+            
+            // Mostrar seção do código
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('code-section').classList.remove('hidden');
+        }
+        
+        // Copiar código
+        function copyCode() {
+            navigator.clipboard.writeText(currentCode).then(() => {
+                const responseMsg = document.getElementById('response-message');
+                responseMsg.className = 'response-message success';
+                responseMsg.innerHTML = '<i class="fas fa-check-circle"></i> Código copiado! Agora cole no Discord usando /verificar e depois COLOCAR CÓDIGO';
+                setTimeout(() => {
+                    responseMsg.className = 'response-message';
+                }, 5000);
+            }).catch(() => {
+                const responseMsg = document.getElementById('response-message');
+                responseMsg.className = 'response-message error';
+                responseMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro ao copiar. Copie manualmente: ' + currentCode;
+                setTimeout(() => {
+                    responseMsg.className = 'response-message';
+                }, 5000);
+            });
+        }
+        
+        // Inicializar
+        createParticles();
+        
+        // Animação de typing
+        setTimeout(() => {
+            const typingElement = document.querySelector('.typing-text');
+            if (typingElement) {
+                typingElement.style.animation = 'none';
+                typingElement.style.borderRight = 'none';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
